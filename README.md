@@ -1,5 +1,5 @@
 # Primefaces-morphia-samples
-Contains a few samples of how to use morphia in combination with primefaces, for now only has an example of how use a generic MorphiaLazyDataModel
+Contains a few samples of how to use morphia in combination with primefaces, for now only has an example of how to use a generic MorphiaLazyDataModel
 
 You can run this with ```mvnw quarkus:dev``` or if you're using netbeans, right click the project--->goals--->RUN.
 
