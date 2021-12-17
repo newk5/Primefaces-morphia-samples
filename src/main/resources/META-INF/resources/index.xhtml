@@ -1,0 +1,64 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui">
+
+    <f:view contentType="text/html">
+        <h:head>
+            <title> Morphia DataModel sample</title>
+        </h:head>
+
+        <h:body>
+            <p:growl>
+                <p:autoUpdate />
+            </p:growl>
+
+
+            <h:form id="form">
+                <p:selectBooleanCheckbox itemLabel="Show only sold cars" value="#{indexBean.showOnlySoldCars}">
+                    <p:ajax listener="#{indexBean.toggleShowOnlySoldCars()}" update="tbl" />
+                </p:selectBooleanCheckbox>
+
+                <p:dataTable id="tbl" widgetVar="tbl" value="#{indexBean.dataModel}" var="car" selectionMode="single"  rows="10" paginator="true" rowKey="#{car.id.toString()}" >
+                    <p:column headerText="Brand (filter contains)" filterMatchMode="contains" filterBy="#{car.brand}" sortBy="#{car.brand}"  >
+                        #{car.brand}
+                    </p:column>
+                    <p:column headerText="Year ( less than filter)" filterBy="#{car.year}" sortBy="#{car.year}" filterMatchMode="lt"  >
+                        #{car.year}
+                    </p:column>
+
+                    <p:column headerText="Price ( greater than filter)" filterBy="#{car.price}" sortBy="#{car.price}" filterMatchMode="gt" >
+                        #{car.price}
+                    </p:column>
+                    <p:column headerText="Color (exact filter)" filterBy="#{car.color}" filterMatchMode="exact" sortBy="#{car.color.name}">
+                        <f:facet name="filter">
+                            <p:selectOneMenu filter="true"  onchange="PF('tbl').filter()"  style="width:100%" converter="omnifaces.SelectItemsConverter">
+                                <f:selectItem itemLabel="All" itemValue="#{null}" noSelectionOption="true" />
+                                <f:selectItems value="#{indexBean.colors}" var="color" itemLabel="#{color.name}" itemValue="#{color}" />
+                            </p:selectOneMenu>
+                        </f:facet>
+                        #{car.color.name}
+                    </p:column>
+
+                    <p:column headerText="Sold (custom overridden filter)" filterBy="#{car.sold}" sortBy="#{car.sold}">
+                        #{car.sold ? 'Yes':'No'}
+                    </p:column>
+
+                    <p:column headerText="Previous owners (in filter)" filterBy="#{car.previousOwners}" filterMatchMode="in" >
+                        <f:facet name="filter">
+                            <p:selectCheckboxMenu onchange="PF('tbl').filter()" label="Previous owners" style="width:100%" >
+                                <f:selectItems value="#{indexBean.owners}" var="o" itemLabel="#{o}" itemValue="#{o}"/>
+                                
+                            </p:selectCheckboxMenu >
+                        </f:facet>
+                        #{car.previousOwnersAsString}
+                    </p:column>
+
+
+                </p:dataTable>
+            </h:form>
+        </h:body>
+
+    </f:view>
+
+</html>
