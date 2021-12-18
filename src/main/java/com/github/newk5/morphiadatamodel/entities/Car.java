@@ -3,6 +3,7 @@ package com.github.newk5.morphiadatamodel.entities;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -19,6 +20,7 @@ public class Car implements Serializable {
     private boolean sold;
     private Color color;
     private List<String> previousOwners = new ArrayList<>();
+    private LocalDate lastInspection;
 
     public Car() {
     }
@@ -147,6 +149,20 @@ public class Car implements Serializable {
             return false;
         }
         return true;
+    }
+
+    /**
+     * @return the lastInspection
+     */
+    public LocalDate getLastInspection() {
+        return lastInspection;
+    }
+
+    /**
+     * @param lastInspection the lastInspection to set
+     */
+    public void setLastInspection(LocalDate lastInspection) {
+        this.lastInspection = lastInspection;
     }
 
 }

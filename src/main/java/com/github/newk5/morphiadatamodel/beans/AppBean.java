@@ -9,10 +9,14 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 
 import io.quarkus.runtime.StartupEvent;
+import java.time.LocalDate;
+import java.time.Month;
+import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 @ApplicationScoped
 public class AppBean {
@@ -61,7 +65,7 @@ public class AppBean {
 
         if (datastore.find(Car.class).count() == 0) {
             createCars(50);
-        } 
+        }
     }
 
     public void createCars(int size) {
@@ -81,9 +85,10 @@ public class AppBean {
                 c.getPreviousOwners().add("Peter");
             } else if (i % 15 == 0) {
                 c.getPreviousOwners().add("Emily");
-            }else if (i % 20 == 0) {
+            } else if (i % 20 == 0) {
                 c.getPreviousOwners().add("Jake");
             }
+            c.setLastInspection(between(LocalDate.of(2000, Month.JANUARY, 1), LocalDate.of(2021, Month.DECEMBER, 31)));
             datastore.save(c);
         }
 
@@ -103,6 +108,17 @@ public class AppBean {
 
     private boolean getRandomSoldState() {
         return (Math.random() > 0.5) ? true : false;
+    }
+
+    public static LocalDate between(LocalDate startInclusive, LocalDate endExclusive) {
+        long startEpochDay = startInclusive.toEpochDay();
+        long endEpochDay = endExclusive.toEpochDay();
+        long randomDay = ThreadLocalRandom
+                .current()
+                .nextLong(startEpochDay, endEpochDay);
+
+        LocalDate d = LocalDate.ofEpochDay(randomDay);
+        return d;
     }
 
 }

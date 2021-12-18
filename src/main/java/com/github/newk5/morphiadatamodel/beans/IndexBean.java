@@ -7,6 +7,7 @@ import dev.morphia.query.experimental.filters.Filters;
 import static dev.morphia.query.experimental.filters.Filters.eq;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.faces.view.ViewScoped;
@@ -20,17 +21,17 @@ public class IndexBean implements Serializable {
     private MorphiaLazyDataModel<Car> dataModel;
     private List<Color> colors = new ArrayList<>();
     private boolean showOnlySoldCars;
-    private List<String> owners = new ArrayList<>();  
-  
-    @PostConstruct   
-    public void init() {  
-        if (!PrimeFaces.current().isAjaxRequest()) { 
+    private List<String> owners = new ArrayList<>();
+
+    @PostConstruct
+    public void init() {
+        if (!PrimeFaces.current().isAjaxRequest()) {
             loadCars();
             colors = AppBean.datastore.find(Color.class).iterator().toList();
             owners.add("John");
             owners.add("Michael");
-            owners.add("Jim"); 
-            owners.add("Steve"); 
+            owners.add("Jim");
+            owners.add("Steve");
             owners.add("Roger");
             owners.add("Sarah");
             owners.add("Peter");
@@ -50,6 +51,14 @@ public class IndexBean implements Serializable {
 
     public MorphiaLazyDataModel<Car> loadCars() {
         dataModel = new MorphiaLazyDataModel<>(AppBean.datastore, Car.class);
+
+        //lets implement a global filter here
+        dataModel.globalFilter((query, filterMeta) -> {
+            Object val = filterMeta.getFilterValue();
+            query.filter(Filters.regex("brand").pattern(val + "").caseInsensitive());
+            query.filter(Filters.regex("previousOwners").pattern(val + "").caseInsensitive());
+            query.filter(Filters.regex("color.name").pattern(val + "").caseInsensitive());
+        });
         //override the default match mode query for the "sold" field to allow filtering with strings
         dataModel.overrideFieldQuery("sold", (query, filterMeta) -> {
             if (filterMeta.getFilterValue().toString().startsWith("y")) {

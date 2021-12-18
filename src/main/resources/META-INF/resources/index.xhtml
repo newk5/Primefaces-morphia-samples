@@ -20,6 +20,14 @@
                 </p:selectBooleanCheckbox>
 
                 <p:dataTable id="tbl" widgetVar="tbl" value="#{indexBean.dataModel}" var="car" selectionMode="single"  rows="10" paginator="true" rowKey="#{car.id.toString()}" >
+                    <f:facet name="header">
+                        <div class="p-d-flex p-jc-end">
+                            <p:inputText id="globalFilter" onkeyup="PF('tbl').filter()" style="width:300px"
+                                         placeholder="Search all fields using global function" />
+                        </div>
+                    </f:facet>
+
+
                     <p:column headerText="Brand (filter contains)" filterMatchMode="contains" filterBy="#{car.brand}" sortBy="#{car.brand}"  >
                         #{car.brand}
                     </p:column>
@@ -48,11 +56,21 @@
                         <f:facet name="filter">
                             <p:selectCheckboxMenu onchange="PF('tbl').filter()" label="Previous owners" style="width:100%" >
                                 <f:selectItems value="#{indexBean.owners}" var="o" itemLabel="#{o}" itemValue="#{o}"/>
-                                
+
                             </p:selectCheckboxMenu >
                         </f:facet>
                         #{car.previousOwnersAsString}
                     </p:column>
+
+                    <p:column headerText="Last inspection" filterMatchMode="between" filterBy="#{car.lastInspection}">
+                        <f:facet name="filter">
+                            <p:datePicker selectionMode="range" onchange="PF('tbl').filter()" />
+                        </f:facet>
+                        <h:outputText value="#{car.lastInspection}">
+                            <f:convertDateTime pattern="dd-MM-yyyy" type="localDate"  />
+                        </h:outputText>
+                    </p:column>
+
 
 
                 </p:dataTable>
