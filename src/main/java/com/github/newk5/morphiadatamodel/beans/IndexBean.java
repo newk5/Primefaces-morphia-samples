@@ -52,12 +52,17 @@ public class IndexBean implements Serializable {
     public MorphiaLazyDataModel<Car> loadCars() {
         dataModel = new MorphiaLazyDataModel<>(AppBean.datastore, Car.class);
 
-        //lets implement a global filter here
+        //lets implement a global filter here for the string fields
         dataModel.globalFilter((query, filterMeta) -> {
             Object val = filterMeta.getFilterValue();
-            query.filter(Filters.regex("brand").pattern(val + "").caseInsensitive());
-            query.filter(Filters.regex("previousOwners").pattern(val + "").caseInsensitive());
-            query.filter(Filters.regex("color.name").pattern(val + "").caseInsensitive());
+            query.filter(
+                    Filters.or(
+                            Filters.regex("brand").pattern(val + "").caseInsensitive(),
+                            Filters.regex("previousOwners").pattern(val + "").caseInsensitive(),
+                            Filters.regex("color.name").pattern(val + "").caseInsensitive()
+                    )
+            );
+
         });
         //override the default match mode query for the "sold" field to allow filtering with strings
         dataModel.overrideFieldQuery("sold", (query, filterMeta) -> {
